@@ -69,6 +69,7 @@ def collectwaitingtime_sea():
         return 0
     except Exception as e:
         print(f'エラーが発生しました: {e}')
+        write_log('エラーが発生した')
         write_log(e)
         return 999
     finally:
@@ -106,6 +107,8 @@ def ins_waittime(t_id,wait_time,ope_cond):
         conn.close()
     except Exception as e:
         print(f'DBでエラーが発生しました: {e}')
+        write_log('エラーが発生した')
+        write_log(e)
 
 def collectwaitingtime_land():
     # WebDriverのセットアップ
@@ -144,13 +147,13 @@ def collectwaitingtime_land():
                             ope_cond.append(operation[0].text)
                             write_log('ID: ' + str(t) + '[1]: operation 情報あり')
                         else:
-                            ope_cond.append("★運営中") #謎 なぜかタグが見つからない --> issueに挙げる
+                            ope_cond.append("★運営中")
                             write_log('ID: ' + str(t) + '[2]: operation タグが見つからない')
                         if len(waiting_time) != 0:
                             wait_time.append(waiting_time[0].text)
                             write_log('ID: ' + str(t) + '[3]: 待ち時間あり')
                         else:
-                            wait_time.append("999") #施設にて確認
+                            wait_time.append("999")
                             write_log('ID: ' + str(t) + '[4]: 施設にて確認')
                     else:
                         operation=link.find_elements(By.CLASS_NAME, 'operation')
@@ -169,12 +172,13 @@ def collectwaitingtime_land():
         return 0
     except Exception as e:
         print(f'エラーが発生しました: {e}')
+        write_log('エラーが発生した')
         write_log(e)
         return 999
     finally:
         driver.quit()  # ブラウザを閉じる
 
-for r in range(833):
+for r in range(833): #8:45-21:00までの予想回数
     write_log(str(r + 1) + '回目の実行開始--------------------------------------------' 
               + '\r' + '[Sea] データ収集開始')
     rt_sea=collectwaitingtime_sea()
@@ -182,4 +186,4 @@ for r in range(833):
     write_log('[Land] データ収集開始')
     rt_land=collectwaitingtime_land()
     write_log('[Land] データ収集完了')
-    time.sleep(5)
+    time.sleep(30)
