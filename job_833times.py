@@ -41,31 +41,45 @@ def collectwaitingtime_sea():
                         operation=link.find_elements(By.CLASS_NAME, 'operation')
                         if len(operation) > 0:
                             ope_cond.append(operation[0].text)
+                            write_log('ID: ' + str(t) + '[1]: operation 情報あり')
                         else:
                             ope_cond.append("★運営中") #謎 なぜかタグが見つからない --> issueに挙げる
+                            write_log('ID: ' + str(t) + '[2]: operation タグが見つからない')
                         if len(waiting_time) != 0:
                             wait_time.append(waiting_time[0].text)
+                            write_log('ID: ' + str(t) + '[3]: 待ち時間あり')
                         else:
                             wait_time.append("999") #施設にて確認
                     else:
                         operation=link.find_elements(By.CLASS_NAME, 'operation')
                         if operation:
                             ope_cond.append(operation[0].text)
+                            write_log('ID: ' + str(t) + '[5]: 別階層で探索 operation 情報あり')
                         else:
                             ope_cond.append("★運営状態不明")
+                            write_log('ID: ' + str(t) + '[6]: 運営状態が不明')
                         wait_time.append("999")
 
             else:
                 print('指定したIDのアトラクションが見つからない')
+                write_log('ID: ' + str(t) + '指定したIDのアトラクションが見つからない')
             index_atrnm=index_atrnm+1
 
         ins_waittime(t_id,wait_time,ope_cond)
         return 0
     except Exception as e:
         print(f'エラーが発生しました: {e}')
+        write_log(e)
         return 999
     finally:
         driver.quit()  # ブラウザを閉じる
+
+def write_log(content):
+    #log_name = "log/"+datetime.datetime.now().strftime("%Y_%M_%D_%H_%M") + ".txt"
+    log_name="test.log"
+    file = open(log_name, "a")
+    file.write(datetime.datetime.now().strftime("%Y/%M/%D %H:%M") +"   " + content + "\r")
+    file.close()
 
 def ins_waittime(t_id,wait_time,ope_cond):
     try:
@@ -104,10 +118,6 @@ def collectwaitingtime_land():
 
         html_content = driver.page_source
 
-        # HTMLコンテンツをファイルに書き出す
-        with open('samplehtml_land.txt', 'w', encoding="utf-8") as f:
-            f.write(html_content)
-
         # 要素を探す
         attr_name=[]
         for i in range(38):
@@ -128,27 +138,28 @@ def collectwaitingtime_land():
                 if realtime_info_elements:
                     waiting_time_element = realtime_info_elements.find_elements(By.CLASS_NAME, 'waitingtime')
                     if waiting_time_element:
-                        #print('ID{}  {}  :存在する'.format(t, attr_name[index_atrnm][0].text),end='\t')
                         waiting_time=realtime_info_elements.find_elements(By.CLASS_NAME, 'time')
                         operation=link.find_elements(By.CLASS_NAME, 'operation')
                         if len(operation) > 0:
                             ope_cond.append(operation[0].text)
+                            write_log('ID: ' + str(t) + '[1]: operation 情報あり')
                         else:
                             ope_cond.append("★運営中") #謎 なぜかタグが見つからない --> issueに挙げる
+                            write_log('ID: ' + str(t) + '[2]: operation タグが見つからない')
                         if len(waiting_time) != 0:
-                            #print('{}分待ち'.format(waiting_time[0].text))
                             wait_time.append(waiting_time[0].text)
+                            write_log('ID: ' + str(t) + '[3]: 待ち時間あり')
                         else:
                             wait_time.append("999") #施設にて確認
-                            #print('現地にて確認')
+                            write_log('ID: ' + str(t) + '[4]: 施設にて確認')
                     else:
                         operation=link.find_elements(By.CLASS_NAME, 'operation')
                         if operation:
                             ope_cond.append(operation[0].text)
-                            #print('ID{}  {}  :存在しない  {}'.format(t, attr_name[index_atrnm][0].text, operation[0].text))
+                            write_log('ID: ' + str(t) + '[5]: 別階層で探索 operation 情報あり')
                         else:
-                            #print('ID{}  {}  :存在しない  ★運営状態不明'.format(t, attr_name[index_atrnm][0].text))
                             ope_cond.append("★運営状態不明")
+                            write_log('ID: ' + str(t) + '[6]: 運営状態が不明')
                         wait_time.append("999")
 
             else:
@@ -158,11 +169,17 @@ def collectwaitingtime_land():
         return 0
     except Exception as e:
         print(f'エラーが発生しました: {e}')
+        write_log(e)
         return 999
     finally:
         driver.quit()  # ブラウザを閉じる
 
 for r in range(833):
+    write_log(str(r + 1) + '回目の実行開始--------------------------------------------' 
+              + '\r' + '[Sea] データ収集開始')
     rt_sea=collectwaitingtime_sea()
+    write_log('[Sea] データ収集完了')
+    write_log('[Land] データ収集開始')
     rt_land=collectwaitingtime_land()
-    time.sleep(30)
+    write_log('[Land] データ収集完了')
+    time.sleep(5)
