@@ -68,18 +68,19 @@ def collectwaitingtime_sea():
         ins_waittime(t_id,wait_time,ope_cond)
         return 0
     except Exception as e:
-        print(f'エラーが発生しました: {e}')
+        error_msg = f'エラーが発生しました: {e}'
         write_log('エラーが発生した')
-        write_log(e)
+        write_log(error_msg)
         return 999
     finally:
         driver.quit()  # ブラウザを閉じる
 
 def write_log(content):
-    #log_name = "log/"+datetime.datetime.now().strftime("%Y_%M_%D_%H_%M") + ".txt"
-    log_name="test.log"
+    log_name="log/" + str(datetime.date.today()) + ".log"
     file = open(log_name, "a")
-    file.write(datetime.datetime.now().strftime("%Y/%M/%D %H:%M") +"   " + content + "\r")
+    file.write(datetime.datetime.now().strftime("%Y/%M/%D %H:%M") +"   ")
+    file.write(content)
+    file.write("\r")
     file.close()
 
 def ins_waittime(t_id,wait_time,ope_cond):
@@ -106,9 +107,9 @@ def ins_waittime(t_id,wait_time,ope_cond):
         cur.close()
         conn.close()
     except Exception as e:
-        print(f'DBでエラーが発生しました: {e}')
+        error_msg = f'DBでエラーが発生しました: {e}'
         write_log('エラーが発生した')
-        write_log(e)
+        write_log(error_msg)
 
 def collectwaitingtime_land():
     # WebDriverのセットアップ
@@ -171,9 +172,9 @@ def collectwaitingtime_land():
         ins_waittime(t_id,wait_time,ope_cond)
         return 0
     except Exception as e:
-        print(f'エラーが発生しました: {e}')
+        error_msg = f'エラーが発生しました: {e}'
         write_log('エラーが発生した')
-        write_log(e)
+        write_log(error_msg)
         return 999
     finally:
         driver.quit()  # ブラウザを閉じる
@@ -182,7 +183,10 @@ for r in range(833): #8:45-21:00までの予想回数
     write_log(str(r + 1) + '回目の実行開始--------------------------------------------' 
               + '\r' + '[Sea] データ収集開始')
     rt_sea=collectwaitingtime_sea()
-    write_log('[Sea] データ収集完了')
+    if rt_sea == 0:
+        write_log('[Sea] データ収集完了')
+    elif rt_sea == 999:
+        write_log('[Sea] Error Occurred')
     write_log('[Land] データ収集開始')
     rt_land=collectwaitingtime_land()
     write_log('[Land] データ収集完了')
