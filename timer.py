@@ -28,7 +28,7 @@ class App(customtkinter.CTk):
                          'second': 0,
                          'microsecond': 9}
         self.time_open = {'hour': 9,
-                         'minute': 45,
+                         'minute': 00,
                          'second': 30}
         self.opening_time = datetime.time(hour=self.time_off['hour'], minute=self.time_off['minute'], 
                                           second=self.time_off['second'], microsecond=self.time_off['microsecond'])
@@ -48,18 +48,15 @@ class App(customtkinter.CTk):
         combobox_minute.grid(row=1,column=3, padx=20, pady=20)
 
         self.update_current_time()
-        print('test')
 
     def button_pressed(self):
         # 0: OFF / 1: ON
         if self.button.cget("text") == "ON クリックでOFF":
-            print('1')
             self.button.configure(text="OFF クリックでON")
             self.opening_time = datetime.time(hour=self.time_off['hour'], minute=self.time_off['minute'], 
                                               second=self.time_off['second'], microsecond=self.time_off['microsecond'])
         
         else:
-            print('2')
             self.button.configure(text="ON クリックでOFF")
             self.opening_time = datetime.time(hour=self.time_open['hour'], minute=self.time_open['minute'], second=self.time_open['second'])
             
@@ -71,23 +68,26 @@ class App(customtkinter.CTk):
 
     def check_opening(self):
         
-        now_time=datetime.datetime.now().time().replace(microsecond=0)
-        if now_time == self.opening_time:
+        current_time=datetime.datetime.now().time().replace(microsecond=0)
+        if current_time == self.opening_time:
             self.label_operation.configure(text = "It's opening hour!!!!!!!!!!")
             self.label_app.configure(text="データ収集中")
             try:
                 self.execute_collectingjob()
             except:
                 self.label_app.configure(text="ジョブ実行中に問題が発生")
-                print('ジョブ実行中に問題が発生')
             else:
                 self.label_app.configure(text="データ収集ジョブ停止中")
 
         elif self.opening_time == datetime.time(hour=0, minute=0, second=0, microsecond=9):
             self.label_operation.configure(text = "Timer is OFF.")
-        elif now_time < self.opening_time:
+        elif current_time < self.opening_time:
+            print(current_time)
+            print(self.opening_time)
             self.label_operation.configure(text = "It's not open yet...")
         else:
+            print(current_time)
+            print(self.opening_time)
             self.label_operation.configure(text = "It's already Open!")
 
     def execute_collectingjob(self):
@@ -95,10 +95,10 @@ class App(customtkinter.CTk):
         subprocess.run(['gnome-terminal', '--', cmd])
 
     def combobox_hour_callback(self, choice):
-        print('combobox[hour] dropdown clicked:', choice)
+        self.opening_time = datetime.time(hour=int(choice))
 
     def combobox_minute_callback(self, choice):
-        print('combobox[minute] dropdown clicked:', choice)
+        self.opening_time = datetime.time(minute=int(choice))
 
     
 app = App()
