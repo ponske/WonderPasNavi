@@ -138,7 +138,7 @@ def ins_waittime(t_id,wait_time,ope_cond):
 
         current=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cur=conn.cursor()
-        for i in range(34):
+        for i in range(len(t_id)):
             cur.execute("""
                         INSERT INTO trk_waitingtime (attr_id,waitingperiod,at_t)
                         VALUES(%s,%s,%s);
