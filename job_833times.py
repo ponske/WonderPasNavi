@@ -178,10 +178,12 @@ def collectwaitingtime_land():
         return 999
     finally:
         driver.quit()  # ブラウザを閉じる
+write_log("Today’s job is started")
 r=1
 while True:
     write_log(str(r + 1) + '回目の実行開始--------------------------------------------' 
               + '\r' + '[Sea] データ収集開始')
+    r = r + 1
     rt_sea=collectwaitingtime_sea()
     if rt_sea == 0:
         write_log('[Sea] データ収集完了')
@@ -192,4 +194,5 @@ while True:
     write_log('[Land] データ収集完了')
     time.sleep(5)
     if datetime.datetime.now().strftime("%H%M%S") > datetime.time(hour=21,minute=5).strftime("%H%M%S"):
-        break 
+        break
+write_log("Today’s job is done!!")
