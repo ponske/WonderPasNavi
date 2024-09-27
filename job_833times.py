@@ -178,8 +178,8 @@ def collectwaitingtime_land():
         return 999
     finally:
         driver.quit()  # ブラウザを閉じる
-
-for r in range(833): #8:45-21:00までの予想回数
+r=1
+while True:
     write_log(str(r + 1) + '回目の実行開始--------------------------------------------' 
               + '\r' + '[Sea] データ収集開始')
     rt_sea=collectwaitingtime_sea()
@@ -190,4 +190,6 @@ for r in range(833): #8:45-21:00までの予想回数
     write_log('[Land] データ収集開始')
     rt_land=collectwaitingtime_land()
     write_log('[Land] データ収集完了')
-    time.sleep(30)
+    time.sleep(5)
+    if datetime.datetime.now().strftime("%H%M%S") > datetime.time(hour=21,minute=5).strftime("%H%M%S"):
+        break 
