@@ -7,3 +7,4 @@ migrations/
 admin/
 cloudinary/
 img/
+uwsgi-my_app.log
