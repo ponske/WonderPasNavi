@@ -2,6 +2,9 @@ import customtkinter
 import datetime
 import subprocess
 
+customtkinter.set_appearance_mode("Light")
+customtkinter.set_default_color_theme("themes/cherry.json")
+
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
