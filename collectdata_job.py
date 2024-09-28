@@ -78,7 +78,7 @@ def collectwaitingtime_sea():
 def write_log(content):
     log_name="log/" + str(datetime.date.today()) + ".log"
     file = open(log_name, "a")
-    file.write(datetime.datetime.now().strftime("%Y/%M/%D %H:%M") +"   ")
+    file.write(datetime.datetime.now().strftime("%Y/%m/%d %H:%M") +"   ")
     file.write(content)
     file.write("\r")
     file.close()
