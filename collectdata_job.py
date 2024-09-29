@@ -7,6 +7,14 @@ from selenium.webdriver.support import expected_conditions as EC
 import psycopg2
 import time 
 import datetime
+import os
+from dotenv import load_dotenv
+import requests
+
+load_dotenv()
+
+LINE_NOTIFY_TOKEN = os.getenv('line_notify_token')
+
 
 def collectwaitingtime_sea():
     # WebDriverのセットアップ
@@ -68,6 +76,12 @@ def collectwaitingtime_sea():
         ins_waittime(t_id,wait_time,ope_cond)
         return 0
     except Exception as e:
+        notification_message = 'エラー発生'
+        line_notify_api='https://notify-api.line.me/api/notify'
+        headers = {'Authorization': f'Bearer {LINE_NOTIFY_TOKEN}'}
+        data = {'message': f'message: {notification_message}'}
+        requests.post(line_notify_api, headers = headers, data = data)
+
         error_msg = f'エラーが発生しました: {e}'
         write_log('エラーが発生した')
         write_log(error_msg)
@@ -179,6 +193,12 @@ def collectwaitingtime_land():
     finally:
         driver.quit()  # ブラウザを閉じる
 write_log("Today’s job is started")
+
+notification_message = 'データ収集開始'
+line_notify_api='https://notify-api.line.me/api/notify'
+headers = {'Authorization': f'Bearer {LINE_NOTIFY_TOKEN}'}
+data = {'message': f'message: {notification_message}'}
+requests.post(line_notify_api, headers = headers, data = data)
 r=1
 while True:
     write_log(str(r + 1) + '回目の実行開始--------------------------------------------' 
@@ -196,3 +216,9 @@ while True:
     if datetime.datetime.now().strftime("%H%M%S") > datetime.time(hour=21,minute=5).strftime("%H%M%S"):
         break
 write_log("Today’s job is done!!")
+
+notification_message = 'データ収集終了'
+line_notify_api='https://notify-api.line.me/api/notify'
+headers = {'Authorization': f'Bearer {LINE_NOTIFY_TOKEN}'}
+data = {'message': f'message: {notification_message}'}
+requests.post(line_notify_api, headers = headers, data = data)
